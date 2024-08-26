@@ -2,7 +2,10 @@ import '@/envConfig'
 
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-export async function generateRoast(couchsurferInfo: string, language: string) {
+export const generateRoast = async (
+  couchsurferInfo: string,
+  language: string,
+) => {
   const systemInstruction =
     'You create playful ridicule and roasts of CouchSurfer member based on their profile information. Keep it fun, humorous, and brief'
   const prompt = `Write a short and playful roast in ${language} for the following CouchSurfer: ${couchsurferInfo}`

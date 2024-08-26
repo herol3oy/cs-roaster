@@ -3,8 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState, useTransition } from 'react'
 
-import { submitForm } from '@/app/actions'
-import AboutModal from '@/app/components/AboutModal'
+import { submitForm } from '@/app/action/submit-form'
+import { AboutModal } from '@/app/components/AboutModal'
 import styles from '@/app/page.module.css'
 import { isCouchsurfingUrl } from '@/utils/is-couchsurfing-url'
 import { languageOptions } from '@/utils/languages'
@@ -20,7 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     const innerEffect = async () => {
-      const couchsurfingUrl = searchParams.get('cs')
+      const couchsurfingUrl = searchParams.get('q')
       const language = searchParams.get('lang')
 
       if (

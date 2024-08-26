@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import styles from '@/app/components/about.module.css'
+import styles from './about-modal.module.css'
 
-export default function AboutModal() {
+export function AboutModal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDarkTheme, setIsDarkTheme] = useState(false)
 
@@ -60,7 +60,7 @@ export default function AboutModal() {
             </a>
             . I&apos;m currently seeking a new opportunity in a front-end role.
             If you know of any openings or would like to connect, feel free to
-            reach out at
+            reach out at {` `}
             <a href='mailto:sedighi@duck.com'>sedighi@duck.com</a>
           </p>
         </article>

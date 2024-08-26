@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
+import { LoadingSpinner } from '@/app/components/LoadingSpinner'
+
 export const metadata: Metadata = {
   title: 'Couchsurgin Roaster',
   description: 'Let AI roast your couchsurfing friend',
@@ -24,7 +26,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Suspense fallback={<p>Loading...</p>}>{children}</Suspense>
+        <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
       </body>
     </html>
   )

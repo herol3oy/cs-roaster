@@ -1,6 +1,6 @@
 'use server'
 
-export async function submitForm(url: string, language?: string) {
+export const submitForm = async (url: string, language?: string) => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL!
 
   try {
