@@ -1,0 +1,17 @@
+export const languageOptions = [
+  { value: 'English', label: '🇬🇧 English' },
+  { value: 'Polish', label: '🇵🇱 Polish' },
+  { value: 'Spanish', label: '🇪🇸 Spanish' },
+  { value: 'Mandarin Chinese', label: '🇨🇳 Mandarin Chinese' },
+  { value: 'Portuguese', label: '🇵🇹 Portuguese' },
+  { value: 'Japanese', label: '🇯🇵 Japanese' },
+  { value: 'German', label: '🇩🇪 German' },
+  { value: 'Arabic', label: '🇸🇦 Arabic' },
+  { value: 'Persian', label: '🇮🇷 Persian' },
+  { value: 'Finnish', label: '🇫🇮 Finnish' },
+  { value: 'Italian', label: '🇮🇹 Italian' },
+  { value: 'French', label: '🇫🇷 French' },
+  { value: 'Ukrainian', label: '🇺🇦 Ukrainian' },
+  { value: 'Turkish', label: '🇹🇷 Turkish' },
+  { value: 'Korean', label: '🇰🇷 Korean' },
+]

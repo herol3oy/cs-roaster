@@ -1,0 +1,22 @@
+'use server'
+
+export async function submitForm(url: string, language?: string) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL!
+
+  try {
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({ url, language }),
+    })
+
+    if (!res.ok) {
+      throw new Error('Network response was not OK!')
+    }
+
+    const data = await res.json()
+    return data
+  } catch (err) {
+    console.error(err)
+    return 'This URL does not exist!'
+  }
+}
