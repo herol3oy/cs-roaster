@@ -13,6 +13,14 @@ export function AboutModal() {
     )
   }, [isDarkTheme])
 
+  const toggleTheme = () => {
+    setIsDarkTheme((isDark) => !isDark)
+  }
+
+  const toggleModal = () => {
+    setIsModalOpen((prev) => !prev)
+  }
+
   return (
     <>
       <header>
@@ -25,13 +33,10 @@ export function AboutModal() {
             </li>
           </ul>
           <ul>
-            <li
-              className={styles.icon}
-              onClick={() => setIsDarkTheme((p) => !p)}
-            >
+            <li className={styles.icon} onClick={toggleTheme}>
               {isDarkTheme ? '🦉' : '🔆'}
             </li>
-            <li className={styles.about} onClick={() => setIsModalOpen(true)}>
+            <li className={styles.about} onClick={toggleModal}>
               🙋‍♂️
             </li>
           </ul>
@@ -40,11 +45,7 @@ export function AboutModal() {
       <dialog open={isModalOpen}>
         <article>
           <header>
-            <button
-              aria-label='Close'
-              rel='prev'
-              onClick={() => setIsModalOpen(false)}
-            />
+            <button aria-label='Close' rel='prev' onClick={toggleModal} />
             <p>
               <strong>About Me</strong>
             </p>
