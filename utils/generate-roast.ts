@@ -1,5 +1,3 @@
-import '@/envConfig'
-
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export const generateRoast = async (
