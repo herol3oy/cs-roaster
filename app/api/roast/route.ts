@@ -1,3 +1,4 @@
+import { DisplayMessage } from '@/types/display-message'
 import { extractBody } from '@/utils/extract-body'
 import { fetcher } from '@/utils/fetcher'
 import { generateRoast } from '@/utils/generate-roast'
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
     const res = await fetcher(url)
 
     if (new URL(res.url).pathname === '/') {
-      return Response.json('This URL is not public.')
+      return Response.json(DisplayMessage.URL_IS_NOT_PUBLIC)
     }
 
     const html = await res.text()
@@ -17,8 +18,7 @@ export async function POST(request: Request) {
     const generatedRoast = await generateRoast(bodyContent, language)
 
     return Response.json(generatedRoast)
-  } catch (error) {
-    console.error(error)
-    return Response.json('Error fetching the URL', { status: 500 })
+  } catch {
+    return Response.json(DisplayMessage.ERROR_FETCHING_URL)
   }
 }

@@ -1,5 +1,6 @@
 'use server'
 
+import { DisplayMessage } from '@/types/display-message'
 import { fetcher } from '@/utils/fetcher'
 
 export const submitForm = async (
@@ -13,8 +14,7 @@ export const submitForm = async (
     })
 
     return await res.json()
-  } catch (err) {
-    console.error(err)
-    return 'This URL does not exist!'
+  } catch (error) {
+    return DisplayMessage.URL_NOT_EXIST
   }
 }

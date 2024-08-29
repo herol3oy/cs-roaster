@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { submitForm } from '@/app/action/submit-form'
 import { AboutModal } from '@/app/components/AboutModal'
 import styles from '@/app/page.module.css'
+import { DisplayMessage } from '@/types/display-message'
 import { isCouchsurfingUrl } from '@/utils/is-couchsurfing-url'
 import { languageOptions } from '@/utils/languages'
 
@@ -24,7 +25,7 @@ export default function Home() {
       const language = searchParams.get('lang')
 
       if (csProfileUrl?.length && !isCouchsurfingUrl(csProfileUrl)) {
-        return setResult('Please submit a valid couchsurfing.com URL.')
+        return setResult(DisplayMessage.URL_IS_INVALID)
       }
 
       if (csProfileUrl?.length && inputRef.current) {
@@ -47,15 +48,15 @@ export default function Home() {
       const language = String(formData.get('language'))
 
       if (!isCouchsurfingUrl(url)) {
-        return setResult('Please submit a valid couchsurfing.com URL.')
+        return setResult(DisplayMessage.URL_IS_INVALID)
       }
 
       startTransition(async () => {
         const roast = await submitForm(url, language)
         setResult(roast)
       })
-    } catch (error) {
-      console.error('Error submitting form:', error)
+    } catch {
+      setResult(DisplayMessage.ERROR_SUBMITTING_FORM)
     }
   }
 
