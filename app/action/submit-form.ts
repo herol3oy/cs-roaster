@@ -1,18 +1,15 @@
 'use server'
 
+import { fetcher } from '@/utils/fetcher'
+
 export const submitForm = async (url: string, language?: string) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/roast`, {
+    const res = await fetcher(`${process.env.NEXT_PUBLIC_BASE_URL}/api/roast`, {
       method: 'POST',
       body: JSON.stringify({ url, language }),
     })
 
-    if (!res.ok) {
-      throw new Error('Network response was not OK!')
-    }
-
-    const data = await res.json()
-    return data
+    return await res.json()
   } catch (err) {
     console.error(err)
     return 'This URL does not exist!'
