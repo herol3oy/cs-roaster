@@ -14,7 +14,5 @@ export const generateRoast = async (
     systemInstruction,
   })
 
-  const result = await model.generateContent(prompt)
-
-  return await result.response.text()
+  return (await model.generateContent(prompt)).response.text()
 }
