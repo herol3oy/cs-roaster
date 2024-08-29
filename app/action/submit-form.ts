@@ -1,10 +1,8 @@
 'use server'
 
 export const submitForm = async (url: string, language?: string) => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL!
-
   try {
-    const res = await fetch(apiUrl, {
+    const res = await fetch('http://localhost:3000/api/roast', {
       method: 'POST',
       body: JSON.stringify({ url, language }),
     })
