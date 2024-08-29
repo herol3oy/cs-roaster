@@ -11,7 +11,7 @@ import { languageOptions } from '@/utils/languages'
 
 export default function Home() {
   const [result, setResult] = useState('')
-  const [isLoading, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -20,19 +20,16 @@ export default function Home() {
 
   useEffect(() => {
     const innerEffect = async () => {
-      const couchsurfingUrl = searchParams.get('q')
+      const csProfileUrl = searchParams.get('q')
       const language = searchParams.get('lang')
 
-      if (
-        couchsurfingUrl?.length &&
-        !isCouchsurfingUrl(String(couchsurfingUrl))
-      ) {
+      if (csProfileUrl?.length && !isCouchsurfingUrl(csProfileUrl)) {
         return setResult('Please submit a valid couchsurfing.com URL.')
       }
 
-      if (couchsurfingUrl?.length && inputRef.current) {
-        inputRef.current.value = couchsurfingUrl
-        const roast = await submitForm(couchsurfingUrl, language || undefined)
+      if (csProfileUrl?.length && inputRef.current) {
+        inputRef.current.value = csProfileUrl
+        const roast = await submitForm(csProfileUrl, language || undefined)
         setResult(roast)
       }
     }
@@ -54,8 +51,8 @@ export default function Home() {
       }
 
       startTransition(async () => {
-        const data = await submitForm(url, language)
-        setResult(data)
+        const roast = await submitForm(url, language)
+        setResult(roast)
       })
     } catch (error) {
       console.error('Error submitting form:', error)
@@ -70,9 +67,9 @@ export default function Home() {
         <input
           type='url'
           name='url'
-          placeholder='https://couchsurfing.com/people/casey'
+          placeholder='https://couchsurfing.com/people/herol3oy'
           aria-label='url'
-          disabled={isLoading}
+          disabled={isPending}
           ref={inputRef}
           minLength={22}
           maxLength={300}
@@ -81,20 +78,20 @@ export default function Home() {
         <select
           name='language'
           aria-label='Select a language'
-          disabled={isLoading}
+          disabled={isPending}
           required
         >
-          {languageOptions.map((option) => (
-            <option key={option.label} value={option.value}>
-              {option.label}
+          {languageOptions.map((language) => (
+            <option key={language.label} value={language.value}>
+              {language.label}
             </option>
           ))}
         </select>
-        <button type='submit' aria-busy={isLoading} disabled={isLoading}>
+        <button type='submit' aria-busy={isPending} disabled={isPending}>
           Roast
         </button>
       </form>
-      {!isLoading && result && <article dir='auto'>{result}</article>}
+      {!isPending && result && <article dir='auto'>{result}</article>}
     </main>
   )
 }

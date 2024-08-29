@@ -2,7 +2,10 @@
 
 import { fetcher } from '@/utils/fetcher'
 
-export const submitForm = async (url: string, language?: string) => {
+export const submitForm = async (
+  url: string,
+  language?: string,
+): Promise<string> => {
   try {
     const res = await fetcher(`${process.env.NEXT_PUBLIC_BASE_URL}/api/roast`, {
       method: 'POST',
