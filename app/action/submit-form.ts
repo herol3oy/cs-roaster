@@ -2,7 +2,7 @@
 
 export const submitForm = async (url: string, language?: string) => {
   try {
-    const res = await fetch('http://localhost:3000/api/roast', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/roast`, {
       method: 'POST',
       body: JSON.stringify({ url, language }),
     })
