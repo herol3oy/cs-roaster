@@ -6,12 +6,13 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { submitForm } from '@/app/action/submit-form'
 import { AboutModal } from '@/app/components/AboutModal'
 import styles from '@/app/page.module.css'
-import { DisplayMessage } from '@/types/display-message'
+import { ErrMsg } from '@/types/err-msg'
+import { Roast } from '@/types/roast'
 import { isCouchsurfingUrl } from '@/utils/is-couchsurfing-url'
-import { languageOptions } from '@/utils/languages'
+import { langOptions } from '@/utils/lang-options'
 
 export default function Home() {
-  const [result, setResult] = useState('')
+  const [result, setResult] = useState<Roast>()
   const [isPending, startTransition] = useTransition()
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -21,17 +22,18 @@ export default function Home() {
 
   useEffect(() => {
     const innerEffect = async () => {
-      const csProfileUrl = searchParams.get('q')
-      const language = searchParams.get('lang')
+      const url = searchParams.get('q')
+      const lang = searchParams.get('lang')
 
-      if (csProfileUrl?.length && !isCouchsurfingUrl(csProfileUrl)) {
-        return setResult(DisplayMessage.URL_IS_INVALID)
+      if (url?.length && !isCouchsurfingUrl(url)) {
+        setResult({ data: '', msg: ErrMsg.INVALID_URL })
+        return
       }
 
-      if (csProfileUrl?.length && inputRef.current) {
-        inputRef.current.value = csProfileUrl
-        const roast = await submitForm(csProfileUrl, language || undefined)
-        setResult(roast)
+      if (url?.length && inputRef.current) {
+        inputRef.current.value = url
+        const { data, msg } = await submitForm(url, lang || undefined)
+        setResult({ data, msg })
       }
     }
 
@@ -45,18 +47,19 @@ export default function Home() {
       router.replace('/')
 
       const url = String(formData.get('url'))
-      const language = String(formData.get('language'))
+      const lang = String(formData.get('lang'))
 
       if (!isCouchsurfingUrl(url)) {
-        return setResult(DisplayMessage.URL_IS_INVALID)
+        setResult({ data: '', msg: ErrMsg.INVALID_URL })
+        return
       }
 
       startTransition(async () => {
-        const roast = await submitForm(url, language)
-        setResult(roast)
+        const { data, msg } = await submitForm(url, lang)
+        setResult({ data, msg })
       })
-    } catch {
-      setResult(DisplayMessage.ERROR_SUBMITTING_FORM)
+    } catch (e) {
+      setResult({ data: '', msg: ErrMsg.ERROR_SUBMITTING_FORM })
     }
   }
 
@@ -77,14 +80,14 @@ export default function Home() {
           required
         />
         <select
-          name='language'
+          name='lang'
           aria-label='Select a language'
           disabled={isPending}
           required
         >
-          {languageOptions.map((language) => (
-            <option key={language.label} value={language.value}>
-              {language.label}
+          {langOptions.map(({ label, value }) => (
+            <option key={label} value={value}>
+              {label}
             </option>
           ))}
         </select>
@@ -92,7 +95,14 @@ export default function Home() {
           Roast
         </button>
       </form>
-      {!isPending && result && <article dir='auto'>{result}</article>}
+      {result && (
+        <article
+          className={result.msg ? 'pico-background-red-600' : ''}
+          dir='auto'
+        >
+          {result.data || result.msg}
+        </article>
+      )}
     </main>
   )
 }

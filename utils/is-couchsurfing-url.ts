@@ -5,7 +5,7 @@ export const isCouchsurfingUrl = (url: string): boolean => {
     const isValidPath = !!pathname.length && !/^\/+$/.test(pathname)
 
     return hostname.endsWith('couchsurfing.com') && isValidPath
-  } catch {
+  } catch (e) {
     return false
   }
 }

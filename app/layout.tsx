@@ -22,7 +22,11 @@ export default function RootLayout({
 
         <link
           rel='stylesheet'
-          href='https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.orange.min.css'
+          href='https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css'
+        />
+        <link
+          rel='stylesheet'
+          href='https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css'
         />
       </head>
       <body>

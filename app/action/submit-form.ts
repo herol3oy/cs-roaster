@@ -1,20 +1,23 @@
 'use server'
 
-import { DisplayMessage } from '@/types/display-message'
+import { ErrMsg } from '@/types/err-msg'
+import { Roast } from '@/types/roast'
 import { fetcher } from '@/utils/fetcher'
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 export const submitForm = async (
   url: string,
-  language?: string,
-): Promise<string> => {
+  lang?: string,
+): Promise<Roast> => {
   try {
-    const res = await fetcher(`${process.env.NEXT_PUBLIC_BASE_URL}/api/roast`, {
+    const res = await fetcher(`${BASE_URL}/api/roast`, {
       method: 'POST',
-      body: JSON.stringify({ url, language }),
+      body: JSON.stringify({ url, lang }),
     })
 
     return await res.json()
-  } catch (error) {
-    return DisplayMessage.URL_NOT_EXIST
+  } catch (e) {
+    return { data: '', msg: ErrMsg.URL_NOT_EXIST }
   }
 }
