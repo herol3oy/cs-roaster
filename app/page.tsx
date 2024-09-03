@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 
 import { submitForm } from '@/app/action/submit-form'
 import { AboutModal } from '@/app/components/AboutModal'
-import styles from '@/app/page.module.css'
+import styles from '@/app/page.module.scss'
 import { ErrMsg } from '@/types/err-msg'
 import { Roast } from '@/types/roast'
 import { isCouchsurfingUrl } from '@/utils/is-couchsurfing-url'
@@ -92,12 +92,14 @@ export default function Home() {
           ))}
         </select>
         <button type='submit' aria-busy={isPending} disabled={isPending}>
-          Roast
+          🔥 Roast
         </button>
       </form>
       {result && (
         <article
-          className={result.msg ? 'pico-background-red-600' : ''}
+          className={
+            result.msg ? 'pico-background-red-600' : 'pico-color-grey-200'
+          }
           dir='auto'
         >
           {result.data || result.msg}

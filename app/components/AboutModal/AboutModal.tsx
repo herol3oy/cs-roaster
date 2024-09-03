@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import styles from './about-modal.module.css'
+import styles from './about-modal.module.scss'
 
 export function AboutModal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -51,11 +51,8 @@ export function AboutModal() {
             </p>
           </header>
           <p>
-            I&apos;m Hamed, a front-end developer (
-            <a href='https://github.com/herol3oy' target='_blank'>
-              github
-            </a>
-            ) based in Warsaw, Poland, with a passion for{' '}
+            I&apos;m Hamed, a front-end developer based in Warsaw, Poland, with
+            a passion for{' '}
             <a href='https://couchsurfing.com/people/herol3oy' target='_blank'>
               CouchSurfing
             </a>

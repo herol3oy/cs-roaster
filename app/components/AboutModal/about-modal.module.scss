@@ -1,0 +1,9 @@
+.about,
+.icon {
+  cursor: pointer;
+  transition: all 100ms ease-in-out;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
