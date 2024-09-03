@@ -97,9 +97,7 @@ export default function Home() {
       </form>
       {result && (
         <article
-          className={
-            result.msg ? 'pico-background-red-600' : 'pico-color-grey-200'
-          }
+          className={result.msg ? 'pico-background-red-600' : ''}
           dir='auto'
         >
           {result.data || result.msg}
