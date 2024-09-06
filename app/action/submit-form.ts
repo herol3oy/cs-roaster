@@ -18,6 +18,6 @@ export const submitForm = async (
 
     return await res.json()
   } catch (e) {
-    return { data: '', msg: ErrMsg.URL_NOT_EXIST }
+    return { data: '', errMsg: ErrMsg.URL_NOT_EXIST }
   }
 }

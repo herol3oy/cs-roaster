@@ -1,0 +1,70 @@
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { createRef } from 'react'
+import { afterEach, describe, expect, test, vi } from 'vitest'
+
+import { RoastForm } from '@/app/components/RoastForm'
+import { ErrMsg } from '@/types/err-msg'
+
+const mockSetResult = vi.fn()
+const mockStartTransition = vi.fn()
+const mockInputRef = createRef<HTMLInputElement>()
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    replace: vi.fn(),
+  }),
+}))
+
+vi.mock('../utils/is-couchsurfing-url', () => ({
+  isCouchsurfingUrl: (url: string) => url.includes('couchsurfing.com'),
+}))
+
+afterEach(cleanup)
+
+describe('RoastForm', () => {
+  const renderRoastForm = () => {
+    render(
+      <RoastForm
+        setResult={mockSetResult}
+        startTransition={mockStartTransition}
+        isPending={false}
+        inputRef={mockInputRef}
+      />,
+    )
+  }
+
+  const getInput = () =>
+    screen.getByPlaceholderText(/couchsurfing/i) as HTMLInputElement
+  const getForm = () => screen.getByRole('form')
+
+  test('renders an input', () => {
+    renderRoastForm()
+    const input = getInput()
+    expect(input).toBeDefined()
+  })
+
+  test('fails if number is submitted', () => {
+    renderRoastForm()
+    const input = getInput()
+    const form = getForm()
+
+    fireEvent.change(input, { target: { value: 123456789 } })
+    fireEvent.submit(form)
+
+    expect(input.checkValidity()).toBe(false)
+  })
+
+  test('fails if a non-Couchsurfing URL is submitted', () => {
+    renderRoastForm()
+    const input = getInput()
+    const form = getForm()
+
+    fireEvent.change(input, { target: { value: 'https://google.com' } })
+    fireEvent.submit(form)
+
+    expect(mockSetResult).toHaveBeenCalledWith({
+      data: '',
+      errMsg: ErrMsg.INVALID_URL,
+    })
+  })
+})
