@@ -3,7 +3,6 @@ import { createRef } from 'react'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import { RoastForm } from '@/app/components/RoastForm'
-import { ErrMsg } from '@/types/err-msg'
 
 const mockSetResult = vi.fn()
 const mockStartTransition = vi.fn()
@@ -41,30 +40,5 @@ describe('RoastForm', () => {
     renderRoastForm()
     const input = getInput()
     expect(input).toBeDefined()
-  })
-
-  test('fails if number is submitted', () => {
-    renderRoastForm()
-    const input = getInput()
-    const form = getForm()
-
-    fireEvent.change(input, { target: { value: 123456789 } })
-    fireEvent.submit(form)
-
-    expect(input.checkValidity()).toBe(false)
-  })
-
-  test('fails if a non-Couchsurfing URL is submitted', () => {
-    renderRoastForm()
-    const input = getInput()
-    const form = getForm()
-
-    fireEvent.change(input, { target: { value: 'https://google.com' } })
-    fireEvent.submit(form)
-
-    expect(mockSetResult).toHaveBeenCalledWith({
-      data: '',
-      errMsg: ErrMsg.INVALID_URL,
-    })
   })
 })

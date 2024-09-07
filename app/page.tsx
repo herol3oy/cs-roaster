@@ -13,7 +13,7 @@ import { Roast } from '@/types/roast'
 import { isCouchsurfingUrl } from '@/utils/is-couchsurfing-url'
 
 export default function Home() {
-  const [result, setResult] = useState<Roast>()
+  const [result, setResult] = useState<Roast | null>(null)
   const [isPending, startTransition] = useTransition()
 
   const inputRef = useRef<HTMLInputElement>(null)
