@@ -5,7 +5,7 @@
   align-items: center;
 }
 
-.icon {
+.spinner {
   position: absolute;
   right: 2.4rem;
   top: 0.8rem;
@@ -15,6 +15,17 @@
   cursor: pointer;
   position: absolute;
   right: 2.3rem;
-  top: 0.5rem;
+  top: 0.8rem;
   font-size: 1.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: #1a1f28;
+
+  &:hover {
+    color: whitesmoke;
+  }
 }

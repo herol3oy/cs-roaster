@@ -102,7 +102,7 @@ export function RoastForm({
         />
         {!isUrlValid && <small id='valid-helper'>{ErrMsg.INVALID_URL}</small>}
 
-        {isPending && <span aria-busy className={styles.icon}></span>}
+        {isPending && <span aria-busy className={styles.spinner}></span>}
 
         {isInputEmpty && !isPending && (
           <span className={styles.cross} onClick={handleClearUrlInput}>
