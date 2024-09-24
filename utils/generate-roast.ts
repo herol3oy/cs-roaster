@@ -12,6 +12,7 @@ export const generateRoast = async (
   const model = genAI.getGenerativeModel({
     model: 'gemini-1.5-flash',
     systemInstruction,
+    generationConfig: { temperature: 1 },
   })
 
   return (await model.generateContent(prompt)).response.text()
