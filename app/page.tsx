@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 
 import { submitForm } from '@/app/action/submit-form'
 import { AboutModal } from '@/app/components/AboutModal'
+import { BuyMeACoffeeButton } from '@/app/components/BuyMeACoffeeButton'
 import { RoastForm } from '@/app/components/RoastForm'
 import { RoastResult } from '@/app/components/RoastResult'
 import styles from '@/app/page.module.scss'
@@ -51,7 +52,12 @@ export default function Home() {
         isPending={isPending}
         inputRef={inputRef}
       />
-      {result && <RoastResult result={result} />}
+      {result && (
+        <>
+          <RoastResult result={result} />
+          <BuyMeACoffeeButton />
+        </>
+      )}
     </main>
   )
 }
