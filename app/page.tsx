@@ -170,7 +170,7 @@ export default function Home() {
                   <input
                     type='url'
                     name='url'
-                    placeholder='https://couchsurfing.com/people/herol3oy'
+                    placeholder='https://couchsurfing.com/herol3oy'
                     aria-label='url'
                     disabled={isPending}
                     ref={inputCsRoastUrlRef}
@@ -220,7 +220,7 @@ export default function Home() {
                   <input
                     type='url'
                     name='csGuest'
-                    placeholder='https://couchsurfing.com/people/herol3oy'
+                    placeholder='https://couchsurfing.com/herol3oy'
                     aria-label='Guest URL'
                     disabled={isPending}
                     ref={inputCsGuestRef}
@@ -246,7 +246,7 @@ export default function Home() {
                   <input
                     type='url'
                     name='csHost'
-                    placeholder='https://couchsurfing.com/people/majidghyasi'
+                    placeholder='https://couchsurfing.com/casey'
                     aria-label='Host URL'
                     disabled={isPending}
                     ref={inputCsHostRef}
