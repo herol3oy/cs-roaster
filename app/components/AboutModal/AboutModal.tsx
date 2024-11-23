@@ -7,10 +7,7 @@ export function AboutModal() {
   const [isDarkTheme, setIsDarkTheme] = useState(false)
 
   useEffect(() => {
-    document.documentElement.setAttribute(
-      'data-theme',
-      isDarkTheme ? 'light' : 'dark',
-    )
+    document.documentElement.setAttribute('data-theme', isDarkTheme ? 'light' : 'dark')
   }, [isDarkTheme])
 
   const toggleTheme = () => {
@@ -27,9 +24,7 @@ export function AboutModal() {
         <nav>
           <ul>
             <li>
-              <hgroup>
-                <h2>Couchsurfing Roaster</h2>
-              </hgroup>
+              <strong>Couchsurfing AI Assistant</strong>
             </li>
           </ul>
           <ul>
@@ -51,13 +46,11 @@ export function AboutModal() {
             </p>
           </header>
           <p>
-            I&apos;m Hamed, a front-end developer based in Warsaw, Poland, with
-            a passion for{' '}
+            I&apos;m Hamed, a front-end developer based in Warsaw, Poland, with a passion for{' '}
             <a href='https://couchsurfing.com/people/herol3oy' target='_blank'>
               CouchSurfing
             </a>
-            . I&apos;m currently seeking a new opportunity in a front-end role.
-            If you know of any openings or would like to connect, feel free to
+            . I&apos;m currently seeking a new opportunity in a front-end role. If you know of any openings or would like to connect, feel free to
             reach out at {` `}
             <a href='mailto:sedighi@duck.com'>sedighi@duck.com</a>
           </p>
