@@ -1,11 +1,15 @@
 import { ErrMsg } from '@/types/err-msg'
-import { Roast } from '@/types/roast'
 import { extractBody } from '@/utils/extract-body'
 import { fetcher } from '@/utils/fetcher'
 import { generateRoast } from '@/utils/generate-roast'
 
+export interface CSRoast {
+  url: string
+  lang: string
+}
+
 export async function POST(request: Request) {
-  const { url, lang } = await request.json()
+  const { url, lang }: CSRoast = await request.json()
 
   const res = await fetcher(url)
 

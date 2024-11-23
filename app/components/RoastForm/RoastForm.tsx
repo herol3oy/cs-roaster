@@ -1,36 +1,23 @@
 import debounce from 'lodash.debounce'
 import { useRouter } from 'next/navigation'
-import {
-  ChangeEvent,
-  Dispatch,
-  RefObject,
-  SetStateAction,
-  TransitionStartFunction,
-  useMemo,
-  useState,
-} from 'react'
+import { ChangeEvent, Dispatch, RefObject, SetStateAction, TransitionStartFunction, useMemo, useState } from 'react'
 
-import { submitForm } from '@/app/action/submit-form'
+import { submitCsRoastForm } from '@/app/action/submit-cs-roast-form'
+import { Data } from '@/types/data'
 import { ErrMsg } from '@/types/err-msg'
-import { Roast } from '@/types/roast'
 import { isCouchsurfingUrl } from '@/utils/is-couchsurfing-url'
 import { langOptions } from '@/utils/lang-options'
 
 import styles from './roast-form.module.scss'
 
 interface RoastFormProps {
-  setResult: Dispatch<SetStateAction<Roast | null>>
+  setResult: Dispatch<SetStateAction<Data | null>>
   startTransition: TransitionStartFunction
   isPending: boolean
   inputRef: RefObject<HTMLInputElement>
 }
 
-export function RoastForm({
-  setResult,
-  startTransition,
-  isPending,
-  inputRef,
-}: RoastFormProps) {
+export function RoastForm({ setResult, startTransition, isPending, inputRef }: RoastFormProps) {
   const [isUrlValid, setIsUrlValid] = useState<boolean | 'spelling'>('spelling')
 
   const router = useRouter()
@@ -45,7 +32,7 @@ export function RoastForm({
       const lang = String(formData.get('lang'))
 
       startTransition(async () => {
-        const { data, errMsg } = await submitForm(url, lang)
+        const { data, errMsg } = await submitCsRoastForm(url, lang)
         setResult({ data, errMsg })
       })
     } catch (e) {
@@ -90,13 +77,7 @@ export function RoastForm({
           minLength={22}
           maxLength={300}
           required
-          aria-invalid={
-            isUrlValid === 'spelling'
-              ? 'spelling'
-              : !isUrlValid
-                ? 'true'
-                : 'false'
-          }
+          aria-invalid={isUrlValid === 'spelling' ? 'spelling' : !isUrlValid ? 'true' : 'false'}
           onChange={handleUrlChange}
           aria-describedby='valid-helper'
         />
@@ -111,12 +92,7 @@ export function RoastForm({
         )}
       </div>
 
-      <select
-        name='lang'
-        aria-label='Select a language'
-        disabled={isDisabled}
-        required
-      >
+      <select name='lang' aria-label='Select a language' disabled={isDisabled} required>
         {langOptions.map(({ label, value }) => (
           <option key={label} value={value}>
             {label}

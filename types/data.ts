@@ -1,4 +1,4 @@
-export type Roast = {
+export type Data = {
   data: string
   errMsg: string
 }
