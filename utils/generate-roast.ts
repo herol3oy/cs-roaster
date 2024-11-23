@@ -4,9 +4,9 @@ export const generateRoast = async (
   couchsurferInfo: string,
   language: string = 'English',
   isCsRequest: boolean = false,
-  postcard: string,
-  chocolate: string,
-  cooking: string,
+  postcard?: string,
+  chocolate?: string,
+  cooking?: string,
 ) => {
   const systemInstruction = isCsRequest
     ? 'You create polite and creative Couchsurfing request based on their profile information. Keep it fun, humorous, and brief.'
