@@ -25,6 +25,7 @@ export default function Home() {
   const [isRoastUrlValid, setIsRoastUrlValid] = useState<boolean | 'spelling'>('spelling')
   const [isGuestUrlValid, setIsGuestUrlValid] = useState<boolean | 'spelling'>('spelling')
   const [isHostUrlValid, setIsHostUrlValid] = useState<boolean | 'spelling'>('spelling')
+  const [isNonPublic, setIsNonPublic] = useState<boolean>(false)
 
   const [isPending, startTransition] = useTransition()
 
@@ -144,6 +145,10 @@ export default function Home() {
     setIsHostUrlValid('spelling')
   }
 
+  const handleNonPublicChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsNonPublic(e.target.checked)
+  }
+
   const isCsRoastDisabled = isPending || !isRoastUrlValid || isRoastUrlValid === 'spelling'
   const isCsRequestDisabled = isPending || !isGuestUrlValid || !isHostUrlValid || isGuestUrlValid === 'spelling' || isHostUrlValid === 'spelling'
 
@@ -172,7 +177,7 @@ export default function Home() {
                     name='url'
                     placeholder='https://couchsurfing.com/herol3oy'
                     aria-label='url'
-                    disabled={isPending}
+                    disabled={isPending || isNonPublic}
                     ref={inputCsRoastUrlRef}
                     minLength={22}
                     maxLength={300}
@@ -181,6 +186,24 @@ export default function Home() {
                     onChange={handleCsRoastUrlChange}
                     aria-describedby='valid-helper'
                   />
+                  <fieldset>
+                    <label>
+                      <input name='nonpublic' type='checkbox' role='switch' onChange={handleNonPublicChange} />
+                      The Couchsurfing profile is nonpublic!
+                    </label>
+                  </fieldset>
+
+                  {isNonPublic && (
+                    <>
+                      <input type='file' name='profile-webpage' accept='.html,.htm,text/html' size={2000000} />
+                      <small>
+                        <cite>
+                          Please navigate to the profile page, save it as a complete webpage (Windows: Ctrl+S / Mac: ⌘+S), then upload the saved file
+                          here.
+                        </cite>
+                      </small>
+                    </>
+                  )}
                   {!isRoastUrlValid && <small id='valid-helper'>{ErrMsg.INVALID_URL}</small>}
 
                   {isPending && <span aria-busy className={styles.spinner}></span>}
