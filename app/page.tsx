@@ -152,12 +152,12 @@ export default function Home() {
       <AboutModal />
 
       <div className='tabs'>
-        <div className={styles.tabButtons}>
-          <button className={`outline ${activeTab === 'cs-roast' ? '' : 'secondary'}`} onClick={() => openTab('cs-roast')}>
-            Roast
+        <div role='group'>
+          <button className={`${activeTab === 'cs-roast' ? '' : 'secondary'}`} onClick={() => openTab('cs-roast')}>
+            🔥 Roast Couchsurfer
           </button>
-          <button className={`outline ${activeTab === 'cs-request' ? '' : 'secondary'}`} onClick={() => openTab('cs-request')}>
-            Create CS Request
+          <button className={`${activeTab === 'cs-request' ? '' : 'secondary'}`} onClick={() => openTab('cs-request')}>
+            ✨ Create CS Request
           </button>
         </div>
 
@@ -199,8 +199,8 @@ export default function Home() {
                     </option>
                   ))}
                 </select>
-                <button type='submit' aria-busy={isPending} disabled={isCsRoastDisabled}>
-                  🔥 Roast
+                <button className='outline' type='submit' aria-busy={isPending} disabled={isCsRoastDisabled}>
+                  Roast
                 </button>
               </form>
               {csRoast && (
@@ -282,8 +282,8 @@ export default function Home() {
                     🍝 A home-cooked meal
                   </label>
                 </fieldset>
-                <button type='submit' aria-busy={isPending} disabled={isCsRequestDisabled}>
-                  ✨ Create Request
+                <button className='outline' type='submit' aria-busy={isPending} disabled={isCsRequestDisabled}>
+                  Create Request
                 </button>
               </form>
               {csRequest && (
