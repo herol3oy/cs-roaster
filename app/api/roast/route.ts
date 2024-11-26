@@ -6,19 +6,26 @@ import { generateRoast } from '@/utils/generate-roast'
 export interface CSRoast {
   url: string
   lang: string
+  fileContent?: string
 }
 
 export async function POST(request: Request) {
-  const { url, lang }: CSRoast = await request.json()
+  const { url, lang, fileContent }: CSRoast = await request.json()
 
-  const res = await fetcher(url)
+  let bodyContent: string
 
-  if (new URL(res.url).pathname === '/') {
-    return Response.json({ data: '', errMsg: ErrMsg.URL_IS_NOT_PUBLIC })
+  if (fileContent) {
+    bodyContent = extractBody(fileContent)
+  } else {
+    const res = await fetcher(url)
+
+    if (new URL(res.url).pathname === '/') {
+      return Response.json({ data: '', errMsg: ErrMsg.URL_IS_NOT_PUBLIC })
+    }
+
+    const html = await res.text()
+    bodyContent = extractBody(html)
   }
-
-  const html = await res.text()
-  const bodyContent = extractBody(html)
   const generatedRoast = await generateRoast(bodyContent, lang)
 
   return Response.json({ data: generatedRoast, errMsg: '' })

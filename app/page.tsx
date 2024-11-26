@@ -2,7 +2,7 @@
 
 import debounce from 'lodash.debounce'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ChangeEvent, useEffect, useRef, useState, useTransition } from 'react'
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState, useTransition } from 'react'
 
 import { submitCsRoastForm } from '@/app/action/submit-cs-roast-form'
 import { AboutModal } from '@/app/components/AboutModal'
@@ -26,6 +26,8 @@ export default function Home() {
   const [isGuestUrlValid, setIsGuestUrlValid] = useState<boolean | 'spelling'>('spelling')
   const [isHostUrlValid, setIsHostUrlValid] = useState<boolean | 'spelling'>('spelling')
   const [isNonPublic, setIsNonPublic] = useState<boolean>(false)
+  const [isWebpageFileValid, setIsWebpageFileValid] = useState<boolean | 'spelling'>('spelling')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const [isPending, startTransition] = useTransition()
 
@@ -36,6 +38,7 @@ export default function Home() {
   const inputCsRoastUrlRef = useRef<HTMLInputElement>(null)
   const inputCsGuestRef = useRef<HTMLInputElement>(null)
   const inputCsHostRef = useRef<HTMLInputElement>(null)
+  const inputCsRoastFileRef = useRef<HTMLInputElement>(null)
 
   const isCsRoastInputEmpty = !!inputCsRoastUrlRef?.current?.value
   const isCsGuestInputEmpty = !!inputCsGuestRef?.current?.value
@@ -59,12 +62,56 @@ export default function Home() {
     }
 
     startTransition(async () => {
-      innerEffect()
+      await innerEffect()
     })
   }, [searchParams])
 
   const openTab = (tabName: Tabs) => {
     setActiveTab(tabName)
+    setCsRoast(null)
+    setCsRequest(null)
+    setIsWebpageFileValid('spelling')
+    setIsRoastUrlValid('spelling')
+    setIsGuestUrlValid('spelling')
+    setIsHostUrlValid('spelling')
+    setIsNonPublic(false)
+  }
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+
+    if (file) {
+      const allowedTypes = ['text/html', 'application/html', 'text/mhtml', 'application/mhtml', '.html', '.htm', '.mhtml']
+      const maxFileSize = 1024 * 1024
+
+      if (!allowedTypes.some((type) => file.type.includes(type) || file.name.endsWith(type.slice(1)))) {
+        setSelectedFile(null)
+        setIsWebpageFileValid(false)
+        return
+      }
+
+      if (file.size > maxFileSize) {
+        setSelectedFile(null)
+        setIsWebpageFileValid(false)
+        return
+      }
+
+      const reader = new FileReader()
+
+      reader.onload = (e) => {
+        const fileContent = e.target?.result as string
+        if (/@Couchsurfing/.test(fileContent)) {
+          setSelectedFile(file)
+          setCsRoast(null)
+          setIsWebpageFileValid(true)
+        } else {
+          setSelectedFile(null)
+          setIsWebpageFileValid(false)
+        }
+      }
+
+      reader.readAsText(file)
+    }
   }
 
   const handleCreateCsRoastSubmit = async (formData: FormData) => {
@@ -74,8 +121,14 @@ export default function Home() {
       const url = String(formData.get('url'))
       const lang = String(formData.get('lang'))
 
+      let fileContent: string | undefined
+
+      if (isNonPublic && selectedFile) {
+        fileContent = await selectedFile.text()
+      }
+
       startTransition(async () => {
-        const { data, errMsg } = await submitCsRoastForm(url, lang)
+        const { data, errMsg } = await submitCsRoastForm(url, lang, fileContent)
         setCsRoast({ data, errMsg })
       })
     } catch (e) {
@@ -102,7 +155,7 @@ export default function Home() {
     }
   }
 
-  const validateUrl = debounce((url: string, setValidationState: React.Dispatch<React.SetStateAction<boolean | 'spelling'>>) => {
+  const validateUrl = debounce((url: string, setValidationState: Dispatch<SetStateAction<boolean | 'spelling'>>) => {
     setValidationState(url.trim().length ? isCouchsurfingUrl(url) : 'spelling')
   }, 500)
 
@@ -147,11 +200,16 @@ export default function Home() {
 
   const handleNonPublicChange = (e: ChangeEvent<HTMLInputElement>) => {
     setIsNonPublic(e.target.checked)
+    setCsRoast(null)
+    setIsWebpageFileValid('spelling')
+    setIsRoastUrlValid('spelling')
   }
 
-  const isCsRoastDisabled = isPending || !isRoastUrlValid || isRoastUrlValid === 'spelling'
+  const isCsRoastDisabled =
+    isPending ||
+    (!isNonPublic && (!isRoastUrlValid || isRoastUrlValid === 'spelling')) ||
+    (isNonPublic && (!isWebpageFileValid || isWebpageFileValid === 'spelling'))
   const isCsRequestDisabled = isPending || !isGuestUrlValid || !isHostUrlValid || isGuestUrlValid === 'spelling' || isHostUrlValid === 'spelling'
-
   return (
     <main className={`${styles.main} container`}>
       <AboutModal />
@@ -170,49 +228,59 @@ export default function Home() {
           {activeTab === 'cs-roast' && (
             <div id='roast'>
               <form name='form' action={handleCreateCsRoastSubmit}>
-                <label htmlFor='url'>Paste a Couchsurfing profile URL:</label>
                 <div className={styles.container}>
-                  <input
-                    type='url'
-                    name='url'
-                    placeholder='https://couchsurfing.com/herol3oy'
-                    aria-label='url'
-                    disabled={isPending || isNonPublic}
-                    ref={inputCsRoastUrlRef}
-                    minLength={22}
-                    maxLength={300}
-                    required
-                    aria-invalid={isRoastUrlValid === 'spelling' ? 'spelling' : !isRoastUrlValid ? 'true' : 'false'}
-                    onChange={handleCsRoastUrlChange}
-                    aria-describedby='valid-helper'
-                  />
+                  {isNonPublic ? (
+                    <>
+                      <input
+                        type='file'
+                        name='profile-webpage'
+                        accept='.html,.htm,.mhtml,text/html,text/mhtml'
+                        onChange={handleFileChange}
+                        ref={inputCsRoastFileRef}
+                        required
+                        aria-invalid={isWebpageFileValid === 'spelling' ? 'spelling' : !isWebpageFileValid ? 'true' : 'false'}
+                        aria-describedby='valid-helper'
+                      />
+                      {!isWebpageFileValid && <small id='valid-helper'>{ErrMsg.INVALID_WEBPAGE}</small>}
+                      <cite>
+                        <p>Navigate to the profile page and save it (using Ctrl+S or ⌘+S), then upload it here 👆</p>
+                      </cite>
+                    </>
+                  ) : (
+                    <>
+                      <label htmlFor='url'>Paste a Couchsurfing profile URL:</label>
+                      <div className={styles.container}>
+                        {isCsRoastInputEmpty && !isPending && (
+                          <span className={styles.cross} onClick={handleClearCsRoastUrlInput}>
+                            &#10799;
+                          </span>
+                        )}
+                        <input
+                          type='url'
+                          name='url'
+                          placeholder='https://couchsurfing.com/herol3oy'
+                          aria-label='url'
+                          disabled={isPending || isNonPublic}
+                          ref={inputCsRoastUrlRef}
+                          minLength={22}
+                          maxLength={300}
+                          required
+                          aria-invalid={isRoastUrlValid === 'spelling' ? 'spelling' : !isRoastUrlValid ? 'true' : 'false'}
+                          onChange={handleCsRoastUrlChange}
+                          aria-describedby='valid-helper'
+                        />
+                        {!isRoastUrlValid && <small id='valid-helper'>{ErrMsg.INVALID_URL}</small>}
+                      </div>
+                    </>
+                  )}
                   <fieldset>
                     <label>
                       <input name='nonpublic' type='checkbox' role='switch' onChange={handleNonPublicChange} />
-                      The Couchsurfing profile is nonpublic!
+                      The Couchsurfing profile is nonpublic 🔒
                     </label>
                   </fieldset>
 
-                  {isNonPublic && (
-                    <>
-                      <input type='file' name='profile-webpage' accept='.html,.htm,text/html' size={2000000} />
-                      <small>
-                        <cite>
-                          Please navigate to the profile page, save it as a complete webpage (Windows: Ctrl+S / Mac: ⌘+S), then upload the saved file
-                          here.
-                        </cite>
-                      </small>
-                    </>
-                  )}
-                  {!isRoastUrlValid && <small id='valid-helper'>{ErrMsg.INVALID_URL}</small>}
-
                   {isPending && <span aria-busy className={styles.spinner}></span>}
-
-                  {isCsRoastInputEmpty && !isPending && (
-                    <span className={styles.cross} onClick={handleClearCsRoastUrlInput}>
-                      &#10799;
-                    </span>
-                  )}
                 </div>
 
                 <select name='lang' aria-label='Select a language' disabled={isCsRoastDisabled} required>
