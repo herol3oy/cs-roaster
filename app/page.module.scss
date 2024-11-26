@@ -26,9 +26,20 @@
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  background-color: #1a1f28;
+  background-color: #2d3748;
+  color: #e2e8f0;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.25),
+    0 1px 3px rgba(0, 0, 0, 0.15);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
 
   &:hover {
-    color: whitesmoke;
+    background-color: #4a5568;
+    color: #ffffff;
+    border-color: #a0aec0;
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.2);
   }
 }
