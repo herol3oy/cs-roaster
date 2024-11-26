@@ -29,6 +29,11 @@
   background-color: #1a1f28;
 
   &:hover {
-    color: whitesmoke;
+    color: #ffffff;
+    background-color: #4a5568;
+    border-color: #a0aec0;
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.2);
   }
 }
