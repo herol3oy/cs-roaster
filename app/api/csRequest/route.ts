@@ -1,4 +1,4 @@
-import { ErrMsg } from '@/types/err-msg'
+import { AppMsg } from '@/types/app-msg'
 import { extractBody } from '@/utils/extract-body'
 import { fetcher } from '@/utils/fetcher'
 import { generateRoast } from '@/utils/generate-roast'
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   const [res1, res2] = await Promise.all([fetcher(url1), fetcher(url2)])
 
   if ([res1, res2].some((response) => new URL(response.url).pathname === '/')) {
-    return Response.json({ data: '', errMsg: ErrMsg.URL_IS_NOT_PUBLIC })
+    return Response.json({ data: '', errMsg: AppMsg.URL_IS_NOT_PUBLIC })
   }
 
   const html1 = await res1.text()

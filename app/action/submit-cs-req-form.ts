@@ -1,7 +1,6 @@
 'use server'
 
-import { Data } from '@/types/data'
-import { ErrMsg } from '@/types/err-msg'
+import { AppMsg } from '@/types/app-msg'
 import { fetcher } from '@/utils/fetcher'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
@@ -27,6 +26,6 @@ export const submitCsRequestForm = async ({
 
     return await res.json()
   } catch (e) {
-    return { data: '', errMsg: ErrMsg.URL_DOES_NOT_EXIST }
+    return { data: '', errMsg: AppMsg.URL_DOES_NOT_EXIST }
   }
 }

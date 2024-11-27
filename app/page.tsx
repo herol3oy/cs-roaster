@@ -9,14 +9,13 @@ import { AboutModal } from '@/app/components/AboutModal'
 import { BuyMeACoffeeButton } from '@/app/components/BuyMeACoffeeButton'
 import { RoastResult } from '@/app/components/RoastResult'
 import styles from '@/app/page.module.scss'
+import { AppMsg } from '@/types/app-msg'
 import { Data } from '@/types/data'
-import { ErrMsg } from '@/types/err-msg'
+import { Tabs } from '@/types/tabs'
 import { isCouchsurfingUrl } from '@/utils/is-couchsurfing-url'
 import { langOptions } from '@/utils/lang-options'
 
 import { submitCsRequestForm } from './action/submit-cs-req-form'
-
-type Tabs = 'cs-roast' | 'cs-request'
 
 export default function Home() {
   const [csRoast, setCsRoast] = useState<Data | null>(null)
@@ -43,6 +42,7 @@ export default function Home() {
   const isCsRoastInputEmpty = !!inputCsRoastUrlRef?.current?.value
   const isCsGuestInputEmpty = !!inputCsGuestRef?.current?.value
   const isCsHostInputEmpty = !!inputCsHostRef?.current?.value
+  const isCsFileInputEmpty = !!inputCsRoastFileRef?.current?.value
 
   useEffect(() => {
     const innerEffect = async () => {
@@ -50,7 +50,7 @@ export default function Home() {
       const lang = searchParams.get('lang')
 
       if (url?.length && !isCouchsurfingUrl(url)) {
-        setCsRoast({ data: '', errMsg: ErrMsg.INVALID_URL })
+        setCsRoast({ data: '', errMsg: AppMsg.INVALID_URL })
         return
       }
 
@@ -132,7 +132,7 @@ export default function Home() {
         setCsRoast({ data, errMsg })
       })
     } catch (e) {
-      setCsRoast({ data: '', errMsg: ErrMsg.ERROR_SUBMITTING_FORM })
+      setCsRoast({ data: '', errMsg: AppMsg.ERROR_SUBMITTING_FORM })
     }
   }
 
@@ -151,7 +151,7 @@ export default function Home() {
         setCsRequest(data)
       })
     } catch (e) {
-      setCsRequest({ data: '', errMsg: ErrMsg.ERROR_SUBMITTING_FORM })
+      setCsRequest({ data: '', errMsg: AppMsg.ERROR_SUBMITTING_FORM })
     }
   }
 
@@ -180,6 +180,14 @@ export default function Home() {
     }
     setCsRoast(null)
     setIsRoastUrlValid('spelling')
+  }
+
+  const handleClearCsFileInput = () => {
+    if (inputCsRoastFileRef.current) {
+      inputCsRoastFileRef.current.value = ''
+    }
+    setSelectedFile(null)
+    setIsWebpageFileValid('spelling')
   }
 
   const handleClearUrlCSGuestInput = () => {
@@ -214,179 +222,192 @@ export default function Home() {
     <main className={`${styles.main} container`}>
       <AboutModal />
 
-      <div className='tabs'>
-        <div role='group'>
-          <button className={`${activeTab === 'cs-roast' ? '' : 'secondary'}`} onClick={() => openTab('cs-roast')}>
-            🔥 Roast Couchsurfer
-          </button>
-          <button className={`${activeTab === 'cs-request' ? '' : 'secondary'}`} onClick={() => openTab('cs-request')}>
-            ✨ Create CS Request
-          </button>
-        </div>
+      <article className='tabs'>
+        <header>
+          <div role='group'>
+            <button className={`${activeTab === 'cs-roast' ? '' : 'secondary'}`} onClick={() => openTab('cs-roast')}>
+              🔥 Roast Couchsurfer
+            </button>
+            <button className={`${activeTab === 'cs-request' ? '' : 'secondary'}`} onClick={() => openTab('cs-request')}>
+              ✨ Create CS Request
+            </button>
+          </div>
+        </header>
 
-        <div className='tab-content'>
-          {activeTab === 'cs-roast' && (
-            <div id='roast'>
-              <form name='form' action={handleCreateCsRoastSubmit}>
-                <div className={styles.container}>
-                  {isNonPublic ? (
-                    <>
+        {activeTab === 'cs-roast' && (
+          <>
+            <form name='form' action={handleCreateCsRoastSubmit}>
+              <div className={styles.container}>
+                {isNonPublic ? (
+                  <>
+                    <label htmlFor='profile-webpage'>Select a Couchsurfing webpage:</label>
+                    <div className={styles.container}>
+                      {isCsFileInputEmpty && !isPending && (
+                        <span className={styles.cross} onClick={handleClearCsFileInput}>
+                          &#10799;
+                        </span>
+                      )}
                       <input
                         type='file'
                         name='profile-webpage'
                         accept='.html,.htm,.mhtml,text/html,text/mhtml'
                         onChange={handleFileChange}
+                        aria-label='Couchsurfing profile webpage upload file'
+                        disabled={isPending}
                         ref={inputCsRoastFileRef}
                         required
                         aria-invalid={isWebpageFileValid === 'spelling' ? 'spelling' : !isWebpageFileValid ? 'true' : 'false'}
                         aria-describedby='valid-helper'
                       />
-                      {!isWebpageFileValid && <small id='valid-helper'>{ErrMsg.INVALID_WEBPAGE}</small>}
-                      <cite>
-                        <p>Navigate to the profile page and save it (using Ctrl+S or ⌘+S), then upload it here 👆</p>
-                      </cite>
-                    </>
-                  ) : (
-                    <>
-                      <label htmlFor='url'>Paste a Couchsurfing profile URL:</label>
-                      <div className={styles.container}>
-                        {isCsRoastInputEmpty && !isPending && (
-                          <span className={styles.cross} onClick={handleClearCsRoastUrlInput}>
-                            &#10799;
-                          </span>
-                        )}
-                        <input
-                          type='url'
-                          name='url'
-                          placeholder='https://couchsurfing.com/herol3oy'
-                          aria-label='url'
-                          disabled={isPending || isNonPublic}
-                          ref={inputCsRoastUrlRef}
-                          minLength={22}
-                          maxLength={300}
-                          required
-                          aria-invalid={isRoastUrlValid === 'spelling' ? 'spelling' : !isRoastUrlValid ? 'true' : 'false'}
-                          onChange={handleCsRoastUrlChange}
-                          aria-describedby='valid-helper'
-                        />
-                        {!isRoastUrlValid && <small id='valid-helper'>{ErrMsg.INVALID_URL}</small>}
-                      </div>
-                    </>
-                  )}
-                  <fieldset>
-                    <label>
-                      <input name='nonpublic' type='checkbox' role='switch' onChange={handleNonPublicChange} />
-                      The Couchsurfing profile is nonpublic 🔒
-                    </label>
-                  </fieldset>
-
-                  {isPending && <span aria-busy className={styles.spinner}></span>}
-                </div>
-
-                <select name='lang' aria-label='Select a language' disabled={isCsRoastDisabled} required>
-                  {langOptions.map(({ label, value }) => (
-                    <option key={label} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-                <button className='outline' type='submit' aria-busy={isPending} disabled={isCsRoastDisabled}>
-                  Roast
-                </button>
-              </form>
-              {csRoast && (
-                <>
-                  <RoastResult result={csRoast} />
-                  <BuyMeACoffeeButton />
-                </>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'cs-request' && (
-            <section id='request'>
-              <form name='requestForm' action={handleCreateCsReqSubmit}>
-                <label htmlFor='url'>Paste your Couchsurfing profile URL:</label>
-                <div className={styles.container}>
-                  <input
-                    type='url'
-                    name='csGuest'
-                    placeholder='https://couchsurfing.com/herol3oy'
-                    aria-label='Guest URL'
-                    disabled={isPending}
-                    ref={inputCsGuestRef}
-                    minLength={22}
-                    maxLength={300}
-                    required
-                    aria-invalid={isGuestUrlValid === 'spelling' ? 'spelling' : !isGuestUrlValid ? 'true' : 'false'}
-                    onChange={handleGuestUrlChange}
-                    aria-describedby='guest-valid-helper'
-                  />
-                  {!isGuestUrlValid && <small id='valid-helper'>{ErrMsg.INVALID_URL}</small>}
-
-                  {isPending && <span aria-busy className={styles.spinner}></span>}
-
-                  {isCsGuestInputEmpty && !isPending && (
-                    <span className={styles.cross} onClick={handleClearUrlCSGuestInput}>
-                      &#10799;
-                    </span>
-                  )}
-                </div>
-                <label htmlFor='csHost'>Paste your future Couchsurfing host profile URL:</label>
-                <div className={styles.container}>
-                  <input
-                    type='url'
-                    name='csHost'
-                    placeholder='https://couchsurfing.com/casey'
-                    aria-label='Host URL'
-                    disabled={isPending}
-                    ref={inputCsHostRef}
-                    minLength={22}
-                    maxLength={300}
-                    required
-                    aria-invalid={isHostUrlValid === 'spelling' ? 'spelling' : !isHostUrlValid ? 'true' : 'false'}
-                    onChange={handleHostUrlChange}
-                    aria-describedby='host-valid-helper'
-                  />
-                  {!isHostUrlValid && <small id='valid-helper'>{ErrMsg.INVALID_URL}</small>}
-
-                  {isPending && <span aria-busy className={styles.spinner}></span>}
-
-                  {isCsHostInputEmpty && !isPending && (
-                    <span className={styles.cross} onClick={handleClearUrlCsHostInput}>
-                      &#10799;
-                    </span>
-                  )}
-                </div>
+                      {!isWebpageFileValid && <small id='valid-helper'>{AppMsg.INVALID_WEBPAGE}</small>}
+                      {isWebpageFileValid && isWebpageFileValid !== 'spelling' && <small id='valid-helper'>{AppMsg.VALID_WEBPAGE}</small>}
+                      <p>
+                        <cite>
+                          <small>Navigate to the Couchsurfing profile page and save it (using Ctrl+S or ⌘+S), then upload it here 👆</small>
+                        </cite>
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <label htmlFor='url'>Paste a Couchsurfing profile URL:</label>
+                    <div className={styles.container}>
+                      {isCsRoastInputEmpty && !isPending && (
+                        <span className={styles.cross} onClick={handleClearCsRoastUrlInput}>
+                          &#10799;
+                        </span>
+                      )}
+                      <input
+                        type='url'
+                        name='url'
+                        placeholder='https://couchsurfing.com/herol3oy'
+                        aria-label='url'
+                        disabled={isPending || isNonPublic}
+                        ref={inputCsRoastUrlRef}
+                        minLength={22}
+                        maxLength={300}
+                        required
+                        aria-invalid={isRoastUrlValid === 'spelling' ? 'spelling' : !isRoastUrlValid ? 'true' : 'false'}
+                        onChange={handleCsRoastUrlChange}
+                        aria-describedby='valid-helper'
+                      />
+                      {!isRoastUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
+                    </div>
+                  </>
+                )}
                 <fieldset>
-                  <legend>What would you like to offer your host as a gesture of appreciation?</legend>
                   <label>
-                    <input type='checkbox' name='postcard' />
-                    💌 A postcard
-                  </label>
-                  <label>
-                    <input type='checkbox' name='chocolate' />
-                    🍫 Some chocolate
-                  </label>
-                  <label>
-                    <input type='checkbox' name='cooking' />
-                    🍝 A home-cooked meal
+                    <input name='nonpublic' type='checkbox' role='switch' onChange={handleNonPublicChange} />
+                    The Couchsurfing profile is nonpublic 🔒
                   </label>
                 </fieldset>
-                <button className='outline' type='submit' aria-busy={isPending} disabled={isCsRequestDisabled}>
-                  Create Request
-                </button>
-              </form>
-              {csRequest && (
-                <>
-                  <RoastResult result={csRequest} />
-                  <BuyMeACoffeeButton />
-                </>
-              )}
-            </section>
-          )}
-        </div>
-      </div>
+
+                {isPending && <span aria-busy className={styles.spinner}></span>}
+              </div>
+
+              <select name='lang' aria-label='Select a language' disabled={isCsRoastDisabled} required>
+                {langOptions.map(({ label, value }) => (
+                  <option key={label} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+              <button className='outline' type='submit' aria-busy={isPending} disabled={isCsRoastDisabled}>
+                Roast
+              </button>
+            </form>
+            {csRoast && (
+              <>
+                <RoastResult result={csRoast} />
+                <BuyMeACoffeeButton />
+              </>
+            )}
+          </>
+        )}
+
+        {activeTab === 'cs-request' && (
+          <>
+            <form name='requestForm' action={handleCreateCsReqSubmit}>
+              <label htmlFor='csGuest'>Paste your Couchsurfing profile URL:</label>
+              <div className={styles.container}>
+                <input
+                  type='url'
+                  name='csGuest'
+                  placeholder='https://couchsurfing.com/herol3oy'
+                  aria-label='Couchsurfing profile guest url'
+                  disabled={isPending}
+                  ref={inputCsGuestRef}
+                  minLength={22}
+                  maxLength={300}
+                  required
+                  aria-invalid={isGuestUrlValid === 'spelling' ? 'spelling' : !isGuestUrlValid ? 'true' : 'false'}
+                  onChange={handleGuestUrlChange}
+                  aria-describedby='guest-valid-helper'
+                />
+                {!isGuestUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
+
+                {isPending && <span aria-busy className={styles.spinner}></span>}
+
+                {isCsGuestInputEmpty && !isPending && (
+                  <span className={styles.cross} onClick={handleClearUrlCSGuestInput}>
+                    &#10799;
+                  </span>
+                )}
+              </div>
+              <label htmlFor='csHost'>Paste your future Couchsurfing host profile URL:</label>
+              <div className={styles.container}>
+                <input
+                  type='url'
+                  name='csHost'
+                  placeholder='https://couchsurfing.com/casey'
+                  aria-label='Couchsurfing profile host url'
+                  disabled={isPending}
+                  ref={inputCsHostRef}
+                  minLength={22}
+                  maxLength={300}
+                  required
+                  aria-invalid={isHostUrlValid === 'spelling' ? 'spelling' : !isHostUrlValid ? 'true' : 'false'}
+                  onChange={handleHostUrlChange}
+                  aria-describedby='host-valid-helper'
+                />
+                {!isHostUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
+
+                {isPending && <span aria-busy className={styles.spinner}></span>}
+
+                {isCsHostInputEmpty && !isPending && (
+                  <span className={styles.cross} onClick={handleClearUrlCsHostInput}>
+                    &#10799;
+                  </span>
+                )}
+              </div>
+              <fieldset>
+                <legend>What would you like to offer your host as a gesture of appreciation?</legend>
+                <label>
+                  <input type='checkbox' name='postcard' />
+                  💌 A postcard
+                </label>
+                <label>
+                  <input type='checkbox' name='chocolate' />
+                  🍫 Some chocolate
+                </label>
+                <label>
+                  <input type='checkbox' name='cooking' />
+                  🍝 A home-cooked meal
+                </label>
+              </fieldset>
+              <button className='outline' type='submit' aria-busy={isPending} disabled={isCsRequestDisabled}>
+                Create Request
+              </button>
+            </form>
+            {csRequest && (
+              <>
+                <RoastResult result={csRequest} />
+                <BuyMeACoffeeButton />
+              </>
+            )}
+          </>
+        )}
+      </article>
     </main>
   )
 }

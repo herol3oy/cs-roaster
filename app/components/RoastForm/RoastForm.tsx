@@ -3,8 +3,8 @@ import { useRouter } from 'next/navigation'
 import { ChangeEvent, Dispatch, RefObject, SetStateAction, TransitionStartFunction, useMemo, useState } from 'react'
 
 import { submitCsRoastForm } from '@/app/action/submit-cs-roast-form'
+import { AppMsg } from '@/types/app-msg'
 import { Data } from '@/types/data'
-import { ErrMsg } from '@/types/err-msg'
 import { isCouchsurfingUrl } from '@/utils/is-couchsurfing-url'
 import { langOptions } from '@/utils/lang-options'
 
@@ -36,7 +36,7 @@ export function RoastForm({ setResult, startTransition, isPending, inputRef }: R
         setResult({ data, errMsg })
       })
     } catch (e) {
-      setResult({ data: '', errMsg: ErrMsg.ERROR_SUBMITTING_FORM })
+      setResult({ data: '', errMsg: AppMsg.ERROR_SUBMITTING_FORM })
     }
   }
 
@@ -81,7 +81,7 @@ export function RoastForm({ setResult, startTransition, isPending, inputRef }: R
           onChange={handleUrlChange}
           aria-describedby='valid-helper'
         />
-        {!isUrlValid && <small id='valid-helper'>{ErrMsg.INVALID_URL}</small>}
+        {!isUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
 
         {isPending && <span aria-busy className={styles.spinner}></span>}
 
