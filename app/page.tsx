@@ -334,6 +334,7 @@ export default function Home() {
                       />
                       {!isWebpageFileValid && <small id='valid-helper'>{AppMsg.INVALID_WEBPAGE}</small>}
                       {isWebpageFileValid && isWebpageFileValid !== 'spelling' && <small id='valid-helper'>{AppMsg.VALID_WEBPAGE}</small>}
+                      {isPending && <span aria-busy className={styles.spinner}></span>}
                       <p>
                         <cite>
                           <small>Navigate to the Couchsurfing profile page and save it (using Ctrl+S or ⌘+S), then upload it here 👆</small>
@@ -365,6 +366,7 @@ export default function Home() {
                         aria-describedby='valid-helper'
                       />
                       {!isRoastUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
+                      {isPending && <span aria-busy className={styles.spinner}></span>}
                     </div>
                   </>
                 )}
@@ -374,8 +376,6 @@ export default function Home() {
                     The Couchsurfing profile is nonpublic 🔒
                   </label>
                 </fieldset>
-
-                {isPending && <span aria-busy className={styles.spinner}></span>}
               </div>
 
               <select name='lang' aria-label='Select a language' disabled={isCsRoastDisabled} required>
@@ -451,6 +451,7 @@ export default function Home() {
                     />
                     {!isCsHostWebpageFileValid && <small id='valid-helper'>{AppMsg.INVALID_WEBPAGE}</small>}
                     {isCsHostWebpageFileValid && isCsHostWebpageFileValid !== 'spelling' && <small id='valid-helper'>{AppMsg.VALID_WEBPAGE}</small>}
+                    {isPending && <span aria-busy className={styles.spinner}></span>}
                     <p>
                       <cite>
                         <small>Navigate to the Couchsurfing profile page and save it (using Ctrl+S or ⌘+S), then upload it here 👆</small>
