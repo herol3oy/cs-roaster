@@ -5,7 +5,12 @@ export const isCouchsurfingUrl = (url: string): boolean => {
     const isValidPath = !!pathname.length && !/^\/+$/.test(pathname)
 
     const isValidProfilePath =
-      /^\/users\/\d+$/.test(pathname) || /^\/people\/[a-zA-Z0-9.-]+$/.test(pathname) || /^\/[a-zA-Z][a-zA-Z0-9.-]*$/.test(pathname)
+      /^\/users\/\d+\/?$/.test(pathname) ||
+      /^\/people\/[a-zA-Z0-9.-]+\/?$/.test(pathname) ||
+      /^\/[a-zA-Z][a-zA-Z0-9.-]*\/?$/.test(pathname) ||
+      /^\/0\/?$/.test(pathname) ||
+      /^\/[1-9]\d*\/?$/.test(pathname) ||
+      /^\/0[a-zA-Z0-9.-]*\/?$/.test(pathname)
 
     const isCorrectDomain = hostname === 'couchsurfing.com' || hostname === 'www.couchsurfing.com'
     const isValidProtocol = protocol === 'http:' || protocol === 'https:'
