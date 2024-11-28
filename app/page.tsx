@@ -366,6 +366,7 @@ export default function Home() {
                         aria-describedby='valid-helper'
                       />
                       {!isRoastUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
+                      {isRoastUrlValid && isRoastUrlValid !== 'spelling' && <small id='valid-helper'>{AppMsg.VALID_CS_URL}</small>}
                       {isPending && <span aria-busy className={styles.spinner}></span>}
                     </div>
                   </>
@@ -418,6 +419,7 @@ export default function Home() {
                   aria-describedby='guest-valid-helper'
                 />
                 {!isGuestUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
+                {isGuestUrlValid && isGuestUrlValid !== 'spelling' && <small id='valid-helper'>{AppMsg.VALID_CS_URL}</small>}
 
                 {isPending && <span aria-busy className={styles.spinner}></span>}
 
@@ -483,6 +485,7 @@ export default function Home() {
                       aria-describedby='host-valid-helper'
                     />
                     {!isHostUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
+                    {isHostUrlValid && isHostUrlValid !== 'spelling' && <small id='valid-helper'>{AppMsg.VALID_CS_URL}</small>}
                     {isPending && <span aria-busy className={styles.spinner}></span>}
                   </div>
                 </>

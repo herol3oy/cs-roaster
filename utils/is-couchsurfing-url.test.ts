@@ -24,15 +24,18 @@ const VALID_URLS = [
   'https://couchsurfing.com/user?',
   'http://couchsurfing.com/user#',
   'https://www.couchsurfing.com/user?q=123',
-  'https://couchsurfing.com/people/?q=abc',
+  'https://www.couchsurfing.com/users/1234567',
   'https://www.couchsurfing.com/users/1992251?utm_campaign=profile_share&utm_source=couchsurfing-ios',
 ]
 
 const INVALID_URLS = [
   'https://www.subdomain.couchsurfing.com/user',
+  'https://couchsurfing.com/people/?q=abc',
   'https://subdomain.couchsurfing.com',
   'htp://www.couchsurfing.com/user',
+  'htp://www.couchsurfing.com/123',
   'https://couchsurfing.org/user',
+  'https://couchsurfing.com/user/',
   'https://www.couchsurfing.com/',
   'https://www.couchsurfing.com',
   'https://couchsurfing.com/',

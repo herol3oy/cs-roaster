@@ -5,4 +5,5 @@ export enum AppMsg {
   ERROR_SUBMITTING_FORM = 'Error submitting form',
   URL_DOES_NOT_EXIST = 'This URL does not exist!',
   VALID_WEBPAGE = 'Valid Couchsurfing webpage',
+  VALID_CS_URL = 'Valid Couchsurfing URL',
 }
