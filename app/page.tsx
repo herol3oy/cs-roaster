@@ -25,8 +25,11 @@ export default function Home() {
   const [isGuestUrlValid, setIsGuestUrlValid] = useState<boolean | 'spelling'>('spelling')
   const [isHostUrlValid, setIsHostUrlValid] = useState<boolean | 'spelling'>('spelling')
   const [isNonPublic, setIsNonPublic] = useState<boolean>(false)
+  const [isCsHostNonPublic, setIsCsHostNonPublic] = useState<boolean>(false)
   const [isWebpageFileValid, setIsWebpageFileValid] = useState<boolean | 'spelling'>('spelling')
+  const [isCsHostWebpageFileValid, setIsCsHostWebpageFileValid] = useState<boolean | 'spelling'>('spelling')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedFileCsHostRequest, setSelectedFileCsHostRequest] = useState<File | null>(null)
 
   const [isPending, startTransition] = useTransition()
 
@@ -38,11 +41,13 @@ export default function Home() {
   const inputCsGuestRef = useRef<HTMLInputElement>(null)
   const inputCsHostRef = useRef<HTMLInputElement>(null)
   const inputCsRoastFileRef = useRef<HTMLInputElement>(null)
+  const inputCsHostReqFileRef = useRef<HTMLInputElement>(null)
 
   const isCsRoastInputEmpty = !!inputCsRoastUrlRef?.current?.value
   const isCsGuestInputEmpty = !!inputCsGuestRef?.current?.value
   const isCsHostInputEmpty = !!inputCsHostRef?.current?.value
   const isCsFileInputEmpty = !!inputCsRoastFileRef?.current?.value
+  const isCsHostReqFileInputEmpty = !!inputCsHostReqFileRef?.current?.value
 
   useEffect(() => {
     const innerEffect = async () => {
@@ -66,15 +71,19 @@ export default function Home() {
     })
   }, [searchParams])
 
-  const openTab = (tabName: Tabs) => {
+  const switchTab = (tabName: Tabs) => {
     setActiveTab(tabName)
     setCsRoast(null)
     setCsRequest(null)
     setIsWebpageFileValid('spelling')
+    setIsCsHostWebpageFileValid('spelling')
     setIsRoastUrlValid('spelling')
     setIsGuestUrlValid('spelling')
     setIsHostUrlValid('spelling')
     setIsNonPublic(false)
+    setIsCsHostNonPublic(false)
+    setSelectedFile(null)
+    setSelectedFileCsHostRequest(null)
   }
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +123,43 @@ export default function Home() {
     }
   }
 
+  const handleCsReqFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+
+    if (file) {
+      const allowedTypes = ['text/html', 'application/html', 'text/mhtml', 'application/mhtml', '.html', '.htm', '.mhtml']
+      const maxFileSize = 1024 * 1024
+
+      if (!allowedTypes.some((type) => file.type.includes(type) || file.name.endsWith(type.slice(1)))) {
+        setSelectedFileCsHostRequest(null)
+        setIsCsHostWebpageFileValid(false)
+        return
+      }
+
+      if (file.size > maxFileSize) {
+        setSelectedFileCsHostRequest(null)
+        setIsCsHostWebpageFileValid(false)
+        return
+      }
+
+      const reader = new FileReader()
+
+      reader.onload = (e) => {
+        const fileContent = e.target?.result as string
+        if (/@Couchsurfing/.test(fileContent)) {
+          setSelectedFileCsHostRequest(file)
+          setCsRequest(null)
+          setIsCsHostWebpageFileValid(true)
+        } else {
+          setSelectedFileCsHostRequest(null)
+          setIsCsHostWebpageFileValid(false)
+        }
+      }
+
+      reader.readAsText(file)
+    }
+  }
+
   const handleCreateCsRoastSubmit = async (formData: FormData) => {
     try {
       router.replace('/')
@@ -146,8 +192,14 @@ export default function Home() {
       const chocolate = String(formData.get('chocolate'))
       const cooking = String(formData.get('cooking'))
 
+      let fileContent: string | undefined
+
+      if (isCsHostNonPublic && selectedFileCsHostRequest) {
+        fileContent = await selectedFileCsHostRequest.text()
+      }
+
       startTransition(async () => {
-        const data = await submitCsRequestForm({ csGuest, csHost, postcard, chocolate, cooking })
+        const data = await submitCsRequestForm({ csGuest, csHost, postcard, chocolate, cooking, fileContent })
         setCsRequest(data)
       })
     } catch (e) {
@@ -206,18 +258,39 @@ export default function Home() {
     setIsHostUrlValid('spelling')
   }
 
+  const handleClearCsHostReqFileInput = () => {
+    if (inputCsHostReqFileRef.current) {
+      inputCsHostReqFileRef.current.value = ''
+    }
+    setCsRequest(null)
+    setIsCsHostWebpageFileValid('spelling')
+  }
+
   const handleNonPublicChange = (e: ChangeEvent<HTMLInputElement>) => {
     setIsNonPublic(e.target.checked)
     setCsRoast(null)
-    setIsWebpageFileValid('spelling')
     setIsRoastUrlValid('spelling')
+    setIsWebpageFileValid('spelling')
+  }
+
+  const handleNonPublicCsReqChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsCsHostNonPublic(e.target.checked)
+    setCsRequest(null)
+    setIsHostUrlValid('spelling')
+    setIsCsHostWebpageFileValid('spelling')
   }
 
   const isCsRoastDisabled =
     isPending ||
     (!isNonPublic && (!isRoastUrlValid || isRoastUrlValid === 'spelling')) ||
     (isNonPublic && (!isWebpageFileValid || isWebpageFileValid === 'spelling'))
-  const isCsRequestDisabled = isPending || !isGuestUrlValid || !isHostUrlValid || isGuestUrlValid === 'spelling' || isHostUrlValid === 'spelling'
+
+  const isCsRequestDisabled =
+    isPending ||
+    (!isCsHostNonPublic && (!isGuestUrlValid || !isHostUrlValid || isGuestUrlValid === 'spelling' || isHostUrlValid === 'spelling')) ||
+    (isCsHostNonPublic &&
+      (!isCsHostWebpageFileValid || isCsHostWebpageFileValid === 'spelling' || !isGuestUrlValid || isGuestUrlValid === 'spelling'))
+
   return (
     <main className={`${styles.main} container`}>
       <AboutModal />
@@ -225,10 +298,10 @@ export default function Home() {
       <article className='tabs'>
         <header>
           <div role='group'>
-            <button className={`${activeTab === 'cs-roast' ? '' : 'secondary'}`} onClick={() => openTab('cs-roast')}>
+            <button className={`${activeTab === 'cs-roast' ? '' : 'secondary'}`} onClick={() => switchTab('cs-roast')}>
               🔥 Roast Couchsurfer
             </button>
-            <button className={`${activeTab === 'cs-request' ? '' : 'secondary'}`} onClick={() => openTab('cs-request')}>
+            <button className={`${activeTab === 'cs-request' ? '' : 'secondary'}`} onClick={() => switchTab('cs-request')}>
               ✨ Create CS Request
             </button>
           </div>
@@ -354,32 +427,73 @@ export default function Home() {
                   </span>
                 )}
               </div>
-              <label htmlFor='csHost'>Paste your future Couchsurfing host profile URL:</label>
-              <div className={styles.container}>
-                <input
-                  type='url'
-                  name='csHost'
-                  placeholder='https://couchsurfing.com/casey'
-                  aria-label='Couchsurfing profile host url'
-                  disabled={isPending}
-                  ref={inputCsHostRef}
-                  minLength={22}
-                  maxLength={300}
-                  required
-                  aria-invalid={isHostUrlValid === 'spelling' ? 'spelling' : !isHostUrlValid ? 'true' : 'false'}
-                  onChange={handleHostUrlChange}
-                  aria-describedby='host-valid-helper'
-                />
-                {!isHostUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
 
-                {isPending && <span aria-busy className={styles.spinner}></span>}
+              {isCsHostNonPublic ? (
+                <>
+                  <label htmlFor='profile-webpage'>Select a Couchsurfing webpage:</label>
+                  <div className={styles.container}>
+                    {isCsHostReqFileInputEmpty && !isPending && (
+                      <span className={styles.cross} onClick={handleClearCsHostReqFileInput}>
+                        &#10799;
+                      </span>
+                    )}
+                    <input
+                      type='file'
+                      name='profile-webpage'
+                      accept='.html,.htm,.mhtml,text/html,text/mhtml'
+                      onChange={handleCsReqFileChange}
+                      aria-label='Couchsurfing profile webpage upload file'
+                      disabled={isPending}
+                      ref={inputCsHostReqFileRef}
+                      required
+                      aria-invalid={isCsHostWebpageFileValid === 'spelling' ? 'spelling' : !isCsHostWebpageFileValid ? 'true' : 'false'}
+                      aria-describedby='valid-helper'
+                    />
+                    {!isCsHostWebpageFileValid && <small id='valid-helper'>{AppMsg.INVALID_WEBPAGE}</small>}
+                    {isCsHostWebpageFileValid && isCsHostWebpageFileValid !== 'spelling' && <small id='valid-helper'>{AppMsg.VALID_WEBPAGE}</small>}
+                    <p>
+                      <cite>
+                        <small>Navigate to the Couchsurfing profile page and save it (using Ctrl+S or ⌘+S), then upload it here 👆</small>
+                      </cite>
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <label htmlFor='csHost'>Paste your future Couchsurfing host profile URL:</label>
+                  <div className={styles.container}>
+                    {isCsHostInputEmpty && !isPending && (
+                      <span className={styles.cross} onClick={handleClearUrlCsHostInput}>
+                        &#10799;
+                      </span>
+                    )}
+                    <input
+                      type='url'
+                      name='csHost'
+                      placeholder='https://couchsurfing.com/casey'
+                      aria-label='Couchsurfing profile host url'
+                      disabled={isPending}
+                      ref={inputCsHostRef}
+                      minLength={22}
+                      maxLength={300}
+                      required
+                      aria-invalid={isHostUrlValid === 'spelling' ? 'spelling' : !isHostUrlValid ? 'true' : 'false'}
+                      onChange={handleHostUrlChange}
+                      aria-describedby='host-valid-helper'
+                    />
+                    {!isHostUrlValid && <small id='valid-helper'>{AppMsg.INVALID_URL}</small>}
+                    {isPending && <span aria-busy className={styles.spinner}></span>}
+                  </div>
+                </>
+              )}
 
-                {isCsHostInputEmpty && !isPending && (
-                  <span className={styles.cross} onClick={handleClearUrlCsHostInput}>
-                    &#10799;
-                  </span>
-                )}
-              </div>
+              <fieldset>
+                <label>
+                  <input name='nonpublic-cs-host-req' type='checkbox' role='switch' onChange={handleNonPublicCsReqChange} />
+                  The Couchsurfing profile is nonpublic 🔒
+                </label>
+              </fieldset>
+
               <fieldset>
                 <legend>What would you like to offer your host as a gesture of appreciation?</legend>
                 <label>
@@ -395,10 +509,12 @@ export default function Home() {
                   🍝 A home-cooked meal
                 </label>
               </fieldset>
+
               <button className='outline' type='submit' aria-busy={isPending} disabled={isCsRequestDisabled}>
                 Create Request
               </button>
             </form>
+
             {csRequest && (
               <>
                 <RoastResult result={csRequest} />

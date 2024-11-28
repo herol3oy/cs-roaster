@@ -11,17 +11,19 @@ export const submitCsRequestForm = async ({
   postcard,
   chocolate,
   cooking,
+  fileContent,
 }: {
   csGuest: string
   csHost: string
   postcard: string
   chocolate: string
   cooking: string
+  fileContent?: string
 }) => {
   try {
     const res = await fetcher(`${BASE_URL}/api/csRequest`, {
       method: 'POST',
-      body: JSON.stringify({ csGuest, csHost, postcard, chocolate, cooking }),
+      body: JSON.stringify({ csGuest, csHost, postcard, chocolate, cooking, fileContent }),
     })
 
     return await res.json()
