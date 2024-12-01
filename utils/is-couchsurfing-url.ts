@@ -12,7 +12,8 @@ export const isCouchsurfingUrl = (url: string): boolean => {
       /^\/[1-9]\d*\/?$/.test(pathname) ||
       /^\/0[a-zA-Z0-9.-]*\/?$/.test(pathname)
 
-    const isCorrectDomain = hostname === 'couchsurfing.com' || hostname === 'www.couchsurfing.com'
+    const isCorrectDomain = hostname === 'couchsurfing.com' || hostname === 'www.couchsurfing.com' || hostname === 'couchsurfing.page.link'
+
     const isValidProtocol = protocol === 'http:' || protocol === 'https:'
 
     return isValidPath && isCorrectDomain && isValidProtocol && isValidProfilePath
