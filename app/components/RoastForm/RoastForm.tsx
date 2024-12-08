@@ -14,7 +14,7 @@ interface RoastFormProps {
   setResult: Dispatch<SetStateAction<Data | null>>
   startTransition: TransitionStartFunction
   isPending: boolean
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: RefObject<HTMLInputElement | null>
 }
 
 export function RoastForm({ setResult, startTransition, isPending, inputRef }: RoastFormProps) {
