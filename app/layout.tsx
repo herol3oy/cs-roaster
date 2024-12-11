@@ -1,6 +1,7 @@
 import './globals.scss'
 
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { Suspense } from 'react'
 
 import { LoadingSpinner } from '@/app/components/LoadingSpinner'
@@ -24,6 +25,11 @@ export default function RootLayout({
       </head>
       <body>
         <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
+        <Script
+          defer
+          src='https://static.cloudflareinsights.com/beacon.min.js'
+          data-cf-beacon='{"token": "9e940411ad44405ab302648fd7de578f"}'
+        ></Script>
       </body>
     </html>
   )
