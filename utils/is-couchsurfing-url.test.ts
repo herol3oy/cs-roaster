@@ -45,6 +45,10 @@ const VALID_URLS = [
   'https://www.couchsurfing.com/users/1234567',
   'https://www.couchsurfing.com/users/1992251?utm_campaign=profile_share&utm_source=couchsurfing-ios',
   'https://couchsurfing.page.link/Vq1hCbAff9cDv2Jo8',
+  'https://www.couchsurfing.com/people/user_name',
+  'https://www.couchsurfing.com/people/user_name/',
+  'https://couchsurfing.com/user_name',
+  'https://couchsurfing.com/user_name/',
 ]
 
 const INVALID_URLS = [
