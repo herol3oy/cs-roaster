@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState, useTransition } from 'react'
 
 import { submitCsRoastForm } from '@/app/action/submit-cs-roast-form'
-import { AboutModal } from '@/app/components/AboutModal'
 import { BuyMeACoffeeButton } from '@/app/components/BuyMeACoffeeButton'
 import { RoastResult } from '@/app/components/RoastResult'
+import { TopBar } from '@/app/components/TopBar'
 import styles from '@/app/page.module.scss'
 import { AppMsg } from '@/types/app-msg'
 import { Data } from '@/types/data'
@@ -293,8 +293,7 @@ export default function Home() {
 
   return (
     <main className={`${styles.main} container`}>
-      <AboutModal />
-
+      <TopBar />
       <article className='tabs'>
         <header>
           <div role='group'>
@@ -528,6 +527,57 @@ export default function Home() {
           </>
         )}
       </article>
+
+      <h3 style={{ textAlign: 'center' }}>FAQ</h3>
+      <details>
+        <summary>🔍 What is it?</summary>
+        <p>
+          This app humorously roasts Couchsurfers based on their profiles. Additionally, it can generate couch requests by providing both the guest
+          and host profile URLs.
+        </p>
+      </details>
+
+      <hr />
+
+      <details>
+        <summary>🤔 Why did you make this?</summary>
+        <p>
+          For fun! I created this little app as a side project to bring a smile to my Couchsurfing buddies&apos; faces. Another reason was to help a
+          Couchsurfing friend who was sick, stuck in a city while traveling and was unabled to send couch requests for the following days. That
+          inspired me to add a feature to create couch requests in a second by simply providing your profile and the potential host&apos;s profile you
+          want to ask for a couch.
+        </p>
+      </details>
+
+      <hr />
+
+      <details>
+        <summary>💰 Is it free?</summary>
+        <p>
+          Yes, it is! However, I am covering the costs of the language model API (Google Gemini) to generate the results. Donations are always welcome
+          if you enjoy using the app and want to support it.
+        </p>
+      </details>
+
+      <hr />
+
+      <details>
+        <summary>🙋‍♂️ Who are you?</summary>
+        <p>
+          I&apos;m {` `}
+          <a href='https://metro-code.vercel.app/' target='_blank'>
+            Hamed
+          </a>
+          ,{` `}a front-end developer based in Warsaw, Poland, with a passion for {` `}
+          <a href='https://couchsurfing.com/people/herol3oy' target='_blank'>
+            Couchsurfing
+          </a>
+          . I&apos;m currently looking for a new opportunity in a front-end role. If you know of any openings or would like to connect, feel free to
+          reach out at <a href='mailto:sedighi@duck.com'>sedighi@duck.com</a>.
+        </p>
+      </details>
+
+      <hr />
     </main>
   )
 }
