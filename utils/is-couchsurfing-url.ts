@@ -6,6 +6,7 @@ export const isCouchsurfingUrl = (url: string): boolean => {
 
     const isValidProfilePath =
       /^\/users\/\d+\/?$/.test(pathname) ||
+      /^\/c\/users\/[a-zA-Z0-9._-]+\/?$/.test(pathname) ||
       /^\/people\/[a-zA-Z0-9._-]+\/?$/.test(pathname) ||
       /^\/[a-zA-Z][a-zA-Z0-9._-]*\/?$/.test(pathname) ||
       /^\/0\/?$/.test(pathname) ||

@@ -3,12 +3,7 @@ import Link from 'next/link'
 
 export function BuyMeACoffeeButton() {
   return (
-    <Link
-      href='https://www.buymeacoffee.com/herol3oy'
-      target='_blank'
-      rel='noopener noreferrer'
-      passHref
-    >
+    <Link href='https://www.buymeacoffee.com/herol3oy' target='_blank' rel='noopener noreferrer' passHref>
       <Image
         src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png'
         alt='Buy Me a Coffee'

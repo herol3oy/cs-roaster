@@ -25,6 +25,8 @@ const VALID_URLS = [
   'https://www.couchsurfing.com/0/',
   'https://www.couchsurfing.com/0a/',
   'https://couchsurfing.com/users/470731/',
+  'https://couchsurfing.com/c/users/user/',
+  'https://www.couchsurfing.com/c/users/user/',
   'https://couchsurfing.com/people/?q=abc',
   'https://couchsurfing.com/people/?q=abc/',
   'https://couchsurfing.com/user/',

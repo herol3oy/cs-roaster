@@ -22,18 +22,10 @@ afterEach(cleanup)
 
 describe('RoastForm', () => {
   const renderRoastForm = () => {
-    render(
-      <RoastForm
-        setResult={mockSetResult}
-        startTransition={mockStartTransition}
-        isPending={false}
-        inputRef={mockInputRef}
-      />,
-    )
+    render(<RoastForm setResult={mockSetResult} startTransition={mockStartTransition} isPending={false} inputRef={mockInputRef} />)
   }
 
-  const getInput = () =>
-    screen.getByPlaceholderText(/couchsurfing/i) as HTMLInputElement
+  const getInput = () => screen.getByPlaceholderText(/couchsurfing/i) as HTMLInputElement
   const getForm = () => screen.getByRole('form')
 
   test('renders an input', () => {

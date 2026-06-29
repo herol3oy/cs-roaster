@@ -2,6 +2,7 @@
   "name": "cs-roaster",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,6 +17,7 @@
     "@types/lodash.debounce": "^4.0.9",
     "lodash.debounce": "^4.0.8",
     "next": "15.3.4",
+    "openai": "^6.45.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
